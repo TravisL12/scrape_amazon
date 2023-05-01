@@ -3,7 +3,7 @@ const chrome = require("chrome-cookies-secure");
 const { ids } = require("./moreIds");
 
 const getCookies = (url, cb) => {
-  chrome.getCookies(
+  return chrome.getCookies(
     url,
     "puppeteer",
     function (err, cookies) {
@@ -26,7 +26,7 @@ async function fetchPdfs(id) {
   const page = await browser.newPage();
   const url = `https://www.amazon.com/gp/css/summary/print.html?orderID=${id}`;
   // have to use a callback cause it doesn't use promises (weird right?)
-  getCookies(url, async (cookies) => {
+  await getCookies(url, async (cookies) => {
     await page.setCookie(...cookies);
     await page.goto(url, {
       waitUntil: "networkidle2",
@@ -37,10 +37,23 @@ async function fetchPdfs(id) {
     });
     await browser.close();
   });
+  return;
 }
 
-const page = 3;
-const perPage = 20;
-ids.slice(page * perPage, page * perPage + perPage).forEach((id) => {
-  fetchPdfs(id);
-});
+const fetchReceipts = async () => {
+  for (let i = 0; i < ids.length; i++) {
+    const id = ids[i];
+    console.log(`ID: ${id} - starting`);
+    await fetchPdfs(id);
+    console.log(`ID: ${id} - complete`);
+  }
+};
+fetchReceipts();
+
+// const page = 4;
+// const perPage = 20;
+// ids.slice(page * perPage, page * perPage + perPage).forEach(async (id) => {
+//   console.log(`ID: ${id} - starting`);
+//   await fetchPdfs(id);
+//   console.log(`ID: ${id} - complete`);
+// });
