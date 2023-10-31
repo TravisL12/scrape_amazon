@@ -18,12 +18,7 @@ const getCookies = (url, cb) => {
   );
 };
 
-async function fetchPdfs(id) {
-  const browser = await puppeteer.launch({
-    executablePath:
-      "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
-  });
-  const page = await browser.newPage();
+async function fetchPdfs(id, page) {
   const url = `https://www.amazon.com/gp/css/summary/print.html?orderID=${id}`;
   // have to use a callback cause it doesn't use promises (weird right?)
   await getCookies(url, async (cookies) => {
@@ -35,25 +30,22 @@ async function fetchPdfs(id) {
     await page.pdf({
       path: `pdfs/amazon-receipt-${id}.pdf`,
     });
-    await browser.close();
   });
   return;
 }
 
 const fetchReceipts = async () => {
+  const browser = await puppeteer.launch({
+    executablePath:
+      "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+  });
   for (let i = 0; i < ids.length; i++) {
+    const page = await browser.newPage();
     const id = ids[i];
-    console.log(`ID: ${id} - starting`);
-    await fetchPdfs(id);
-    console.log(`ID: ${id} - complete`);
+    console.time(id);
+    await fetchPdfs(id, page);
+    console.timeEnd(id);
   }
+  await browser.close();
 };
 fetchReceipts();
-
-// const page = 4;
-// const perPage = 20;
-// ids.slice(page * perPage, page * perPage + perPage).forEach(async (id) => {
-//   console.log(`ID: ${id} - starting`);
-//   await fetchPdfs(id);
-//   console.log(`ID: ${id} - complete`);
-// });
