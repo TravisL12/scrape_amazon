@@ -46,6 +46,10 @@ const fetchReceipts = async () => {
     await fetchPdfs(id, page);
     console.timeEnd(id);
   }
-  await browser.close();
+
+  setTimeout(() => {
+    console.log("CLOSING");
+    browser.close();
+  }, 10000);
 };
 fetchReceipts();

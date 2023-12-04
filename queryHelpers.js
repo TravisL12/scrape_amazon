@@ -1,4 +1,4 @@
-// query
+// query - paste into the Search Results page console
 function getIds() {
   const links = document.querySelectorAll("a.a-link-normal");
   const ids = [...links]
