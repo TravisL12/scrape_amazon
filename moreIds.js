@@ -1,15 +1,13 @@
-// unique array from 12/3/23
-// create a new Set, Array.from(new Set) to get unique
-const wholeFoodIds = [
+const wholeFoodIds = ["111-4687994-8257866", "111-4996918-5418650"];
+
+const previous = [
+  "114-7728358-1391454",
   "111-0056324-0237076",
   "111-1508933-7454613",
   "114-1849716-0416205",
   "114-6744303-1536264",
   "114-9205878-6338605",
   "114-9723838-4301840",
-];
-
-const previous = [
   "111-0506582-5645024",
   "111-1019742-7655425",
   "111-1048226-4943440",
@@ -232,5 +230,11 @@ const previous = [
   "114-9596757-8259459",
   "114-9863000-3635423",
 ];
+
+function filterUniq(a, b) {
+  return a.filter((itemA) => !b.includes(itemA));
+}
+
+console.log(filterUniq(wholeFoodIds, previous));
 
 module.exports = { ids: wholeFoodIds };
