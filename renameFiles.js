@@ -1,3 +1,6 @@
+// USE THIS RENAME THE RECEIPT FILES TO INCLUDE A DATE AT THE FRONT
+// command: `node renameFiles.js`
+
 const fs = require("fs");
 const path = require("path");
 const { receipts } = require("./receiptsIdDates");
