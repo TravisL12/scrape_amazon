@@ -1,11 +1,16 @@
-#! /usr/bin/env node
 const fs = require("fs");
 const path = require("path");
 const { receipts } = require("./receiptsIdDates");
 
+const pad = (val) => {
+  return `0${val}`.slice(-2);
+};
+
 const formatDate = (dateString) => {
   const date = new Date(dateString);
-  return `${date.getFullYear()}_${date.getMonth + 1}_${date.getDate()}`;
+  return `${date.getFullYear()}_${pad(date.getMonth() + 1)}_${pad(
+    date.getDate()
+  )}`;
 };
 
 const sourceDir = path.join(__dirname, "pdfs", "test");
@@ -19,8 +24,7 @@ directoryFiles.forEach((file) => {
   });
 
   if (match) {
-    console.log((match.date, formatDate(match.date)));
-    fs.rename(
+    fs.copyFile(
       `${sourceDir}/${file}`,
       `${outputDir}/${formatDate(match.date)}-${file}`,
       (err) => {
