@@ -14,3 +14,8 @@ function getOtherIds() {
 }
 
 const url = `https://www.amazon.com/gp/css/summary/print.html?orderID=112-3742623-3439412`;
+
+module.exports = {
+  getIds,
+  getOtherIds,
+};

@@ -1,3 +1,4 @@
+// The date was extracted from the AIHub output
 const receipts = [
   { id: "114-5409099-0741011", date: "5/10/2020" },
   { id: "114-2954014-4149056", date: "8/3/2021" },

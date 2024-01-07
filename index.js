@@ -1,6 +1,6 @@
 const puppeteer = require("puppeteer");
-const chrome = require("chrome-cookies-secure");
 const { ids } = require("./moreIds");
+const chrome = require("chrome-cookies-secure");
 
 const getCookies = (url, cb) => {
   return chrome.getCookies(
