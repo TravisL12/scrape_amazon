@@ -1,10 +1,11 @@
 // query - paste into the Search Results page console
-function getIds() {
-  const links = document.querySelectorAll("a.a-link-normal");
-  const ids = [...links]
+function getIds(aLinks) {
+  const links = aLinks || document.querySelectorAll("a.a-link-normal");
+  const ids = Array.from(links)
     .filter((link) => link.textContent === "Order details")
     .map((link) => new URLSearchParams(link.href).get("search"));
   const uniqIds = [...new Set(ids)];
+  console.log(uniqIds, "uniqIds");
   return uniqIds.join(",");
 }
 

@@ -16,4 +16,4 @@ const getCookies = (url, cb) => {
   );
 };
 
-module.export = { getCookies };
+module.exports = { getCookies };
