@@ -74,8 +74,10 @@ class Receipts {
       .filter(onlyUnique)
       .filter((id) => !orderIds.includes(id));
 
+    console.log(totalIds.length, "ID count");
     console.log(totalIds, "fetching these IDs");
-    this.fetchReceipts(totalIds);
+    await this.fetchReceipts(totalIds);
+    return;
   }
 
   async fetchReceipts(receiptIds) {
@@ -87,18 +89,25 @@ class Receipts {
     }
 
     await Promise.all(pdfs);
+    console.log("COMPLETE");
+    return;
+  }
 
-    console.log("CLOSING");
+  closeSession() {
     this.browser.close();
   }
 }
 
 const pageCount = 20;
-const searchQuery = "whole+foods";
+const queries = ["whole+foods", "fresh"];
 const start = async () => {
   const receipts = new Receipts();
   await receipts.initialize();
-  await receipts.startSearch(pageCount, searchQuery);
+  for (let i = 0; i < queries.length; i++) {
+    const searchQuery = queries[i];
+    await receipts.startSearch(pageCount, searchQuery);
+  }
+  receipts.closeSession();
 };
 
 start();
