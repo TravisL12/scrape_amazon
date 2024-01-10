@@ -3,7 +3,7 @@ const puppeteer = require("puppeteer");
 const { getCookies, buildSearchUrl, onlyUnique } = require("./utils");
 const orderIds = require("./orderIds.json");
 
-const fetchPdfs = (id, page) => {
+const fetchPdfs = (id, page, saveReceipt) => {
   const url = `https://www.amazon.com/gp/css/summary/print.html?orderID=${id}`;
 
   return new Promise((resolve) => {
@@ -31,12 +31,14 @@ const fetchPdfs = (id, page) => {
           path: `pdfs/amazon-receipt-${id}.pdf`,
         });
         console.timeEnd(id);
-        orderIds.push(id);
-        fs.writeFile(
-          "./orderIds.json",
-          JSON.stringify(orderIds.sort()),
-          () => {}
-        );
+        if (saveReceipt) {
+          orderIds.push(id);
+          fs.writeFile(
+            "./orderIds.json",
+            JSON.stringify(orderIds.sort()),
+            () => {}
+          );
+        }
       }
       resolve();
     });
@@ -66,6 +68,10 @@ const crawlPages = (page, url) => {
 };
 
 class Receipts {
+  constructor(saveReceiptId) {
+    this.saveReceiptId = saveReceiptId !== undefined ? saveReceiptId : true;
+  }
+
   async initialize() {
     this.browser = await puppeteer.launch({
       executablePath:
@@ -99,7 +105,7 @@ class Receipts {
     for (let i = 0; i < receiptIds.length; i++) {
       const page = await this.browser.newPage();
       const id = receiptIds[i];
-      const pdf = fetchPdfs(id, page);
+      const pdf = fetchPdfs(id, page, this.saveReceiptId);
       pdfs.push(pdf);
     }
 
@@ -111,10 +117,12 @@ class Receipts {
   }
 }
 
-const pageCount = 30;
-const queries = ["whole+foods", "fresh"];
+const pageCount = process.argv[2] || 30;
+const queries = [process.argv[3]] || ["whole+foods", "fresh"];
+let saveReceipt = false;
+
 const start = async () => {
-  const receipts = new Receipts();
+  const receipts = new Receipts(saveReceipt);
   await receipts.initialize();
   for (let i = 0; i < queries.length; i++) {
     const searchQuery = queries[i];
