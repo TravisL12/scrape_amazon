@@ -3,7 +3,7 @@ const puppeteer = require("puppeteer");
 const { getCookies, buildSearchUrl, onlyUnique } = require("./utils");
 const orderIds = require("./orderIds.json");
 
-const fetchPdfs = (id, page, saveReceipt) => {
+const fetchPdfs = (id, page, saveReceipt, query) => {
   const url = `https://www.amazon.com/gp/css/summary/print.html?orderID=${id}`;
 
   return new Promise((resolve) => {
@@ -28,7 +28,7 @@ const fetchPdfs = (id, page, saveReceipt) => {
         console.log(failedText, id, "isFailed");
       } else {
         await page.pdf({
-          path: `pdfs/amazon-receipt-${id}.pdf`,
+          path: `pdfs/amazon-${query}-${id}.pdf`,
         });
         console.timeEnd(id);
         if (saveReceipt) {
@@ -97,15 +97,15 @@ class Receipts {
     console.log(totalIds.length, "ID count");
     console.log(totalIds, "fetching these IDs");
 
-    return await this.fetchReceipts(totalIds);
+    return await this.fetchReceipts(totalIds, query);
   }
 
-  async fetchReceipts(receiptIds) {
+  async fetchReceipts(receiptIds, query) {
     const pdfs = [];
     for (let i = 0; i < receiptIds.length; i++) {
       const page = await this.browser.newPage();
       const id = receiptIds[i];
-      const pdf = fetchPdfs(id, page, this.saveReceiptId);
+      const pdf = fetchPdfs(id, page, this.saveReceiptId, query);
       pdfs.push(pdf);
     }
 
