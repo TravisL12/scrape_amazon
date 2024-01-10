@@ -33,4 +33,15 @@ function onlyUnique(value, index, array) {
   return array.indexOf(value) === index;
 }
 
-module.exports = { getCookies, buildSearchUrl, onlyUnique };
+const pad = (val) => {
+  return `0${val}`.slice(-2);
+};
+
+const formatDate = (dateString) => {
+  const date = new Date(dateString);
+  return `${date.getFullYear()}_${pad(date.getMonth() + 1)}_${pad(
+    date.getDate()
+  )}`;
+};
+
+module.exports = { getCookies, buildSearchUrl, onlyUnique, formatDate };

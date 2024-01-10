@@ -4,20 +4,10 @@
 const fs = require("fs");
 const path = require("path");
 const { receipts } = require("./receiptsIdDates");
+const { formatDate } = require("./utils");
 
-const pad = (val) => {
-  return `0${val}`.slice(-2);
-};
-
-const formatDate = (dateString) => {
-  const date = new Date(dateString);
-  return `${date.getFullYear()}_${pad(date.getMonth() + 1)}_${pad(
-    date.getDate()
-  )}`;
-};
-
-const sourceDir = path.join(__dirname, "pdfs", "test");
-const outputDir = path.join(__dirname, "pdfs", "output");
+const sourceDir = path.join(__dirname, "categories", "groceries");
+const outputDir = path.join(__dirname, "categories", "renamed");
 
 const directoryFiles = fs.readdirSync(sourceDir);
 

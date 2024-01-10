@@ -3,33 +3,47 @@ const puppeteer = require("puppeteer");
 const { getCookies, buildSearchUrl, onlyUnique } = require("./utils");
 const orderIds = require("./orderIds.json");
 
-const fetchPdfs = async (id, page) => {
+const fetchPdfs = (id, page) => {
   const url = `https://www.amazon.com/gp/css/summary/print.html?orderID=${id}`;
 
-  return new Promise(async (resolve) => {
+  return new Promise((resolve) => {
     console.time(id);
-    await getCookies(url, async (cookies) => {
+    getCookies(url, async (cookies) => {
       await page.setCookie(...cookies);
       await page.goto(url, {
         waitUntil: "networkidle2",
       });
       await page.setViewport({ width: 1680, height: 1050 });
-      await page.pdf({
-        path: `pdfs/amazon-receipt-${id}.pdf`,
+      const failedText = await page.evaluate(() => {
+        const doc = document.querySelector("*").outerHTML;
+        const badText = [
+          "Sign in",
+          "Switch accounts",
+          "Type the characters you see in this image:",
+        ];
+        return badText.find((bad) => doc.includes(bad));
       });
-      console.timeEnd(id);
-      orderIds.push(id);
-      fs.writeFile(
-        "./orderIds.json",
-        JSON.stringify(orderIds.sort()),
-        () => {}
-      );
+
+      if (failedText) {
+        console.log(failedText, id, "isFailed");
+      } else {
+        await page.pdf({
+          path: `pdfs/amazon-receipt-${id}.pdf`,
+        });
+        console.timeEnd(id);
+        orderIds.push(id);
+        fs.writeFile(
+          "./orderIds.json",
+          JSON.stringify(orderIds.sort()),
+          () => {}
+        );
+      }
       resolve();
     });
   });
 };
 
-const crawlPages = async (page, url) => {
+const crawlPages = (page, url) => {
   return new Promise(async (resolve) => {
     await getCookies(url, async (cookies) => {
       await page.setCookie(...cookies);
@@ -76,8 +90,8 @@ class Receipts {
 
     console.log(totalIds.length, "ID count");
     console.log(totalIds, "fetching these IDs");
-    await this.fetchReceipts(totalIds);
-    return;
+
+    return await this.fetchReceipts(totalIds);
   }
 
   async fetchReceipts(receiptIds) {
@@ -85,12 +99,11 @@ class Receipts {
     for (let i = 0; i < receiptIds.length; i++) {
       const page = await this.browser.newPage();
       const id = receiptIds[i];
-      pdfs.push(fetchPdfs(id, page));
+      const pdf = fetchPdfs(id, page);
+      pdfs.push(pdf);
     }
 
-    await Promise.all(pdfs);
-    console.log("COMPLETE");
-    return;
+    return await Promise.all(pdfs);
   }
 
   closeSession() {
@@ -98,7 +111,7 @@ class Receipts {
   }
 }
 
-const pageCount = 20;
+const pageCount = 30;
 const queries = ["whole+foods", "fresh"];
 const start = async () => {
   const receipts = new Receipts();
@@ -106,6 +119,7 @@ const start = async () => {
   for (let i = 0; i < queries.length; i++) {
     const searchQuery = queries[i];
     await receipts.startSearch(pageCount, searchQuery);
+    console.log(searchQuery, "COMPLETE");
   }
   receipts.closeSession();
 };
