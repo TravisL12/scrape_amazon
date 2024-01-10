@@ -117,10 +117,36 @@ class Receipts {
   }
 }
 
-const pageCount = process.argv[2] || 30;
-const queries = [process.argv[3]] || ["whole+foods", "fresh"];
-let saveReceipt = false;
+const parseFlags = (args, flag) => {
+  let item;
+  if (args.includes(flag)) {
+    const idx = args.findIndex((a) => a === flag);
+    if (idx !== undefined && args[idx + 1] !== undefined) {
+      item = args[idx + 1];
+    }
+  }
+  return item;
+};
 
+const getFlags = (args) => {
+  const queryFlag = parseFlags(args, FLAGS.query);
+  const queries = queryFlag ? queryFlag.split(",") : ["whole foods", "fresh"];
+
+  const shouldSave = parseFlags(args, FLAGS.save);
+  const saveReceipt = shouldSave !== undefined ? shouldSave === "true" : true;
+
+  const pageCount = parseFlags(args, FLAGS.count) || 30;
+  console.log({ queries, saveReceipt, pageCount });
+  return { queries, saveReceipt, pageCount };
+};
+
+const FLAGS = {
+  count: "-c",
+  save: "-s",
+  query: "-q",
+};
+
+const { queries, saveReceipt, pageCount } = getFlags(process.argv);
 const start = async () => {
   const receipts = new Receipts(saveReceipt);
   await receipts.initialize();
