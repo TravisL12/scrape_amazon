@@ -1,8 +1,9 @@
 const fs = require("fs");
 const puppeteer = require("puppeteer");
 const { getCookies, buildSearchUrl, onlyUnique } = require("./utils");
-const orderIds = require("./orderIds.json");
+const savedOrderIds = require("./savedOrderIds.json");
 
+let failedCount = 0;
 const fetchPdfs = (id, page, saveReceipt, query) => {
   const url = `https://www.amazon.com/gp/css/summary/print.html?orderID=${id}`;
 
@@ -25,6 +26,7 @@ const fetchPdfs = (id, page, saveReceipt, query) => {
       });
 
       if (failedText) {
+        failedCount++;
         console.log(failedText, id, "isFailed");
       } else {
         await page.pdf({
@@ -32,10 +34,10 @@ const fetchPdfs = (id, page, saveReceipt, query) => {
         });
         console.timeEnd(id);
         if (saveReceipt) {
-          orderIds.push(id);
+          savedOrderIds.push(id);
           fs.writeFile(
-            "./orderIds.json",
-            JSON.stringify(orderIds.sort()),
+            "./savedOrderIds.json",
+            JSON.stringify(savedOrderIds.sort()),
             () => {}
           );
         }
@@ -81,6 +83,7 @@ class Receipts {
   }
 
   async startSearch(pages, query) {
+    failedCount = 0;
     const pageResp = [];
     for (let i = 0; i < pages; i++) {
       const url = buildSearchUrl(i, query);
@@ -93,7 +96,7 @@ class Receipts {
     const totalIds = total
       .flat()
       .filter(onlyUnique)
-      .filter((id) => !orderIds.includes(id));
+      .filter((id) => !savedOrderIds.includes(id));
 
     console.log(totalIds.length, "ID count");
     console.log(totalIds, "fetching these IDs");
@@ -155,6 +158,7 @@ const start = async () => {
     const searchQuery = queries[i];
     await receipts.startSearch(pageCount, searchQuery);
     console.log(searchQuery, "COMPLETE");
+    console.log(failedCount, "FAILED");
   }
   receipts.closeSession();
 };
