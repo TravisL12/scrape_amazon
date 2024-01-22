@@ -1,13 +1,10 @@
-import { first } from "lodash";
+import React from "react";
+import { createRoot } from "react-dom/client";
 
-const names = ["cats", "trav", "connor", "marisa"];
+const root = document.getElementById("root");
 
-const generateElement = ({ tag, className }) => {
-  const el = document.createElement(tag);
-  el.className = className;
-  return el;
+const App = () => {
+  return <div>It is I, React! Really</div>;
 };
 
-const item = generateElement({ tag: "div", className: "container" });
-item.textContent = first(names);
-document.body.appendChild(item);
+createRoot(root).render(<App />);
