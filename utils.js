@@ -38,6 +38,10 @@ const pad = (val) => {
 };
 
 const formatDate = (dateString) => {
+  if (!dateString) {
+    return "";
+  }
+
   const date = new Date(dateString);
   return `${date.getFullYear()}_${pad(date.getMonth() + 1)}_${pad(
     date.getDate()
