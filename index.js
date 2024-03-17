@@ -46,10 +46,9 @@ const fetchPdfs = (id, page, saveReceipt, query) => {
         const formattedDate = formatDate(
           shippedDate?.replace("Shipped on ", "")
         );
-        console.log(shippedDate, formattedDate, "<---- shippedDate");
 
         await page.pdf({
-          path: `pdfs/amazon-${query}-${id}.pdf`,
+          path: `pdfs/${formattedDate}_amazon-${query}-${id}.pdf`,
         });
         console.timeEnd(id);
         if (saveReceipt) {
