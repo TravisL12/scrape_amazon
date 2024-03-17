@@ -4,9 +4,9 @@
   "main": "index.js",
   "license": "MIT",
   "dependencies": {
-    "chrome-cookies-secure": "^2.0.0",
+    "chrome-cookies-secure": "^2.1.1",
     "lodash": "^4.17.21",
-    "puppeteer": "^19.0.0",
+    "puppeteer": "^22.5.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
