@@ -169,8 +169,8 @@ const FLAGS = {
   query: "-q", // string[]
 };
 
-const { queries, saveReceipt, pageCount } = getFlags(process.argv);
 const start = async () => {
+  const { queries, saveReceipt, pageCount } = getFlags(process.argv);
   const receipts = new Receipts(saveReceipt);
   await receipts.initialize();
   for (let i = 0; i < queries.length; i++) {
