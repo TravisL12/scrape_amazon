@@ -1,6 +1,11 @@
 const fs = require("fs");
 const puppeteer = require("puppeteer");
-const { getCookies, buildSearchUrl, onlyUnique } = require("./utils");
+const {
+  getCookies,
+  buildSearchUrl,
+  onlyUnique,
+  formatDate,
+} = require("./utils");
 const savedOrderIds = require("./savedOrderIds.json");
 
 let failedCount = 0;
@@ -15,20 +20,34 @@ const fetchPdfs = (id, page, saveReceipt, query) => {
         waitUntil: "networkidle2",
       });
       await page.setViewport({ width: 1680, height: 1050 });
-      const failedText = await page.evaluate(() => {
+      const { shippedDate, failedText } = await page.evaluate(() => {
+        const shippedDateEl = document.querySelectorAll("td b.sans center");
+        const filtered = Array.from(shippedDateEl).find((td) =>
+          td.textContent?.includes("Shipped on")
+        );
+
         const doc = document.querySelector("*").outerHTML;
         const badText = [
-          "Sign in",
+          "Email or mobile phone number",
           "Switch accounts",
           "Type the characters you see in this image:",
         ];
-        return badText.find((bad) => doc.includes(bad));
+        const failedText = badText.find((bad) => doc.includes(bad));
+        return {
+          shippedDate: filtered?.textContent.trim() || false,
+          failedText,
+        };
       });
 
       if (failedText) {
         failedCount++;
         console.log(failedText, id, "isFailed");
       } else {
+        const formattedDate = formatDate(
+          shippedDate?.replace("Shipped on ", "")
+        );
+        console.log(shippedDate, formattedDate, "<---- shippedDate");
+
         await page.pdf({
           path: `pdfs/amazon-${query}-${id}.pdf`,
         });
@@ -145,9 +164,9 @@ const getFlags = (args) => {
 };
 
 const FLAGS = {
-  count: "-c",
-  save: "-s",
-  query: "-q",
+  count: "-c", // number
+  save: "-s", // boolean
+  query: "-q", // string[]
 };
 
 const { queries, saveReceipt, pageCount } = getFlags(process.argv);
