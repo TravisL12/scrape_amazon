@@ -31,10 +31,11 @@ const fetchPdfs = (id, page, saveReceipt, query) => {
           "Email or mobile phone number",
           "Switch accounts",
           "Type the characters you see in this image:",
+          "Something went wrong on our end",
         ];
         const failedText = badText.find((bad) => doc.includes(bad));
         return {
-          shippedDate: filtered?.textContent.trim() || false,
+          shippedDate: filtered?.textContent.trim() || "",
           failedText,
         };
       });
