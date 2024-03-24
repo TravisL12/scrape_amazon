@@ -102,7 +102,6 @@ class Receipts {
   }
 
   async startSearch(pages, query) {
-    failedCount = 0;
     const pageResp = [];
     for (let i = 0; i < pages; i++) {
       const url = buildSearchUrl(i, query);
@@ -117,8 +116,7 @@ class Receipts {
       .filter(onlyUnique)
       .filter((id) => !savedOrderIds.includes(id));
 
-    console.log(totalIds.length, "ID count");
-    console.log(totalIds, "fetching these IDs");
+    console.log(`fetching these ${totalIds.length} ID's`, totalIds);
 
     return await this.fetchReceipts(totalIds, query);
   }
@@ -166,7 +164,7 @@ const getFlags = (args) => {
 const FLAGS = {
   count: "-c", // number
   save: "-s", // boolean
-  query: "-q", // string[]
+  query: "-q", // comma separated string
 };
 
 const start = async () => {
@@ -175,6 +173,7 @@ const start = async () => {
   await receipts.initialize();
   for (let i = 0; i < queries.length; i++) {
     const searchQuery = queries[i];
+    failedCount = 0;
     await receipts.startSearch(pageCount, searchQuery);
     console.log(searchQuery, "COMPLETE");
     console.log(failedCount, "FAILED");
