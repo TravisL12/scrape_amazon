@@ -17,6 +17,23 @@ const nameClean = (item) => {
   return item.replace(/365 by Whole Foods Market,?/i, "");
 };
 
+const nameSlug = (item) => {
+  if (!item) {
+    return item;
+  }
+  return item.replace(/['.,%\/\s]/gi, "").toLowerCase();
+};
+
+const groupBy = (items) => {
+  return items.reduce((acc, item) => {
+    if (!acc[item.nameSlug]) {
+      acc[item.nameSlug] = [];
+    }
+    acc[item.nameSlug].push(item);
+    return acc;
+  }, {});
+};
+
 export const getData = (orderData) => {
   const headers = orderData[0].slice(1);
   const d = orderData.slice(1).map((row) => {
@@ -38,12 +55,15 @@ export const getData = (orderData) => {
         ...z,
         "item name": nameClean(z["item name"]),
         "item price": priceClean(z["item price"]),
+        nameSlug: nameSlug(nameClean(z["item name"])),
         date: new Date(x.order_placed_date),
         orderId: x.order_number,
       }))
     )
     .flat();
-  console.log(d, all, "orig, convert");
+  const grouped = groupBy(all);
+  console.log(all, "after");
+  console.log(Object.keys(grouped).length, grouped, "GROUPED");
   return all;
 };
 
