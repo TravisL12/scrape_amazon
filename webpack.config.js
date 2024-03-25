@@ -17,6 +17,10 @@ module.exports = {
           loader: "babel-loader",
         },
       },
+      {
+        test: /\.(csv|tsv)$/i,
+        use: ["csv-loader"],
+      },
     ],
   },
   mode: "development",
