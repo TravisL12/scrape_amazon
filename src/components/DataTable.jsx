@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 
 const DataTable = ({ orderData }) => {
   const [data, setData] = useState([]);
+  const [sortCol, setSortCol] = useState("item name");
   const getData = () => {
     const headers = orderData[0].slice(1);
     const d = orderData.slice(1).map((row) => {
@@ -38,16 +39,40 @@ const DataTable = ({ orderData }) => {
       <table>
         <thead>
           <tr>
-            <th>Name</th>
-            <th>Price</th>
-            <th>Date</th>
-            <th>Order</th>
+            <th
+              onClick={() => {
+                setSortCol("item name");
+              }}
+            >
+              Name
+            </th>
+            <th
+              onClick={() => {
+                setSortCol("item price");
+              }}
+            >
+              Price
+            </th>
+            <th
+              onClick={() => {
+                setSortCol("date");
+              }}
+            >
+              Date
+            </th>
+            <th
+              onClick={() => {
+                setSortCol("orderId");
+              }}
+            >
+              Order
+            </th>
           </tr>
         </thead>
         <tbody>
           {data
             .sort((a, b) => {
-              return a["item name"] > b["item name"] ? 1 : -1;
+              return a[sortCol] > b[sortCol] ? 1 : -1;
             })
             .map((d, idx) =>
               d["item name"] ? (
