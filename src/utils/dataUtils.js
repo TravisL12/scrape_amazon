@@ -21,15 +21,24 @@ const nameSlug = (item) => {
   if (!item) {
     return item;
   }
-  return item.replace(/['.,%\/\s]/gi, "").toLowerCase();
+  return item.replace(/[\W()'.,%\/\s]/gi, "").toLowerCase();
 };
 
 const groupBy = (items) => {
   return items.reduce((acc, item) => {
     if (!acc[item.nameSlug]) {
-      acc[item.nameSlug] = [];
+      acc[item.nameSlug] = {
+        name: item["item name"],
+        slug: item.nameSlug,
+        items: [],
+        total: 0,
+        avgCost: 0,
+      };
     }
-    acc[item.nameSlug].push(item);
+    acc[item.nameSlug].total += item["item price"];
+    acc[item.nameSlug].items.push(item);
+    acc[item.nameSlug].avgCost =
+      +acc[item.nameSlug].total / acc[item.nameSlug].items.length;
     return acc;
   }, {});
 };
@@ -63,8 +72,13 @@ export const getData = (orderData) => {
     .flat();
   const grouped = groupBy(all);
   console.log(all, "after");
-  console.log(Object.keys(grouped).length, grouped, "GROUPED");
-  return all;
+  console.log(
+    Object.values(grouped).sort((a, b) =>
+      a.items.length > b.items.length ? -1 : 1
+    ),
+    "GROUPED"
+  );
+  return { all, grouped: Object.values(grouped) };
 };
 
 export const sortColumns = (a, b, sortAsc) => {
@@ -84,4 +98,13 @@ export const sortColumns = (a, b, sortAsc) => {
   }
 
   return sortAsc ? String(a)?.localeCompare(b) : String(b)?.localeCompare(a);
+};
+
+const USDollar = new Intl.NumberFormat("en-US", {
+  style: "currency",
+  currency: "USD",
+});
+
+export const formatCurrency = (price) => {
+  return USDollar.format(price);
 };

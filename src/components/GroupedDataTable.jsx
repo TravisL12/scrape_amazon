@@ -2,20 +2,20 @@ import React, { useEffect, useState } from "react";
 import { formatCurrency, getData, sortColumns } from "../utils/dataUtils";
 import { useSort } from "../hooks/useSort";
 
-const columns = [
-  { name: "Name", sort: "item name" },
-  { name: "Price", sort: "item price" },
-  { name: "Date", sort: "date" },
-  { name: "Order", sort: "orderId" },
+const groupColumns = [
+  { name: "Name", sort: "name" },
+  { name: "Item Count", sort: "items" },
+  { name: "Avg Cost", sort: "avgCost" },
+  { name: "Total", sort: "total" },
 ];
 
-const DataTable = ({ orderData }) => {
+const GroupedDataTable = ({ orderData }) => {
   const [data, setData] = useState([]);
-  const { sortCol, sortAsc, updateSort } = useSort("item name");
+  const { sortCol, sortAsc, updateSort } = useSort("name");
 
   useEffect(() => {
-    const { all } = getData(orderData);
-    setData(all);
+    const { grouped } = getData(orderData);
+    setData(grouped);
   }, [orderData]);
 
   return (
@@ -23,7 +23,7 @@ const DataTable = ({ orderData }) => {
       <table>
         <thead>
           <tr>
-            {columns.map((col) => (
+            {groupColumns.map((col) => (
               <th
                 key={col.name}
                 onClick={() => {
@@ -39,12 +39,12 @@ const DataTable = ({ orderData }) => {
           {data
             .sort((a, b) => sortColumns(a[sortCol], b[sortCol], sortAsc))
             .map((d, idx) =>
-              d["item name"] ? (
-                <tr key={`${d["item name"]}-${d["orderId"]}-${idx}`}>
-                  <td style={{ width: "60%" }}>{d["item name"]}</td>
-                  <td>{formatCurrency(d["item price"])}</td>
-                  <td>{d["date"].toLocaleDateString()}</td>
-                  <td>{d["orderId"]}</td>
+              d["name"] ? (
+                <tr key={`${d["name"]}-${idx}`}>
+                  <td style={{ width: "60%" }}>{d["name"]}</td>
+                  <td>{d["items"].length}</td>
+                  <td>{formatCurrency(d["avgCost"])}</td>
+                  <td>{formatCurrency(d["total"])}</td>
                 </tr>
               ) : null
             )}
@@ -54,4 +54,4 @@ const DataTable = ({ orderData }) => {
   );
 };
 
-export default DataTable;
+export default GroupedDataTable;

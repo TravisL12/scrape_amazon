@@ -21,6 +21,11 @@ module.exports = {
         test: /\.(csv|tsv)$/i,
         use: ["csv-loader"],
       },
+      // https://dev.to/deepanjangh/setting-up-css-and-sass-with-webpack-3cg
+      {
+        test: /\.(s(a|c)ss)$/,
+        use: ["style-loader", "css-loader", "sass-loader"],
+      },
     ],
   },
   mode: "development",
