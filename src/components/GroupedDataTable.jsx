@@ -19,7 +19,7 @@ const GroupedDataTable = ({ orderData }) => {
   }, [orderData]);
 
   return (
-    <div>
+    <div className="data-table">
       <table>
         <thead>
           <tr>
