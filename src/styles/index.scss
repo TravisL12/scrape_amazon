@@ -1,6 +1,16 @@
 body {
   margin: 0;
   font-family: Arial, Helvetica, sans-serif;
+  min-height: 100vh;
+
+  background: rgb(251, 8, 219);
+  background: linear-gradient(
+    60deg,
+    rgba(251, 8, 219, 1) 18%,
+    rgba(255, 206, 206, 1) 45%,
+    rgba(18, 213, 244, 1) 82%,
+    rgba(255, 255, 255, 1) 100%
+  );
 }
 
 table {
@@ -20,14 +30,4 @@ table {
 
 .data-table {
   padding: 20px;
-  min-height: 100vh;
-
-  background: rgb(251, 8, 219);
-  background: linear-gradient(
-    60deg,
-    rgba(251, 8, 219, 1) 18%,
-    rgba(255, 206, 206, 1) 45%,
-    rgba(18, 213, 244, 1) 82%,
-    rgba(255, 255, 255, 1) 100%
-  );
 }

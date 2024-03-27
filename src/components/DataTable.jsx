@@ -1,16 +1,17 @@
 import React from "react";
 import { formatCurrency, sortColumns } from "../utils/dataUtils";
 import { useSort } from "../hooks/useSort";
+import { ITEM_NAME, ITEM_PRICE } from "../constants";
 
 const columns = [
-  { name: "Name", sort: "item name" },
-  { name: "Price", sort: "item price" },
+  { name: "Name", sort: ITEM_NAME },
+  { name: "Price", sort: ITEM_PRICE },
   { name: "Date", sort: "date" },
   { name: "Order", sort: "orderId" },
 ];
 
 const DataTable = ({ data }) => {
-  const { sortCol, sortAsc, updateSort } = useSort("item name");
+  const { sortCol, sortAsc, updateSort } = useSort(ITEM_NAME);
 
   return (
     <table>
@@ -32,10 +33,10 @@ const DataTable = ({ data }) => {
         {data
           .sort((a, b) => sortColumns(a[sortCol], b[sortCol], sortAsc))
           .map((d, idx) =>
-            d["item name"] ? (
-              <tr key={`${d["item name"]}-${d["orderId"]}-${idx}`}>
-                <td style={{ width: "60%" }}>{d["item name"]}</td>
-                <td>{formatCurrency(d["item price"])}</td>
+            d[ITEM_NAME] ? (
+              <tr key={`${d[ITEM_NAME]}-${d["orderId"]}-${idx}`}>
+                <td style={{ width: "60%" }}>{d[ITEM_NAME]}</td>
+                <td>{formatCurrency(d[ITEM_PRICE])}</td>
                 <td>{d["date"].toLocaleDateString()}</td>
                 <td>{d["orderId"]}</td>
               </tr>

@@ -1,3 +1,5 @@
+import { ALL, GROUPED, ITEM_NAME, ITEM_PRICE } from "../constants.js";
+
 const priceClean = (item) => {
   if (!item) {
     return item;
@@ -28,14 +30,14 @@ const groupBy = (items) => {
   return items.reduce((acc, item) => {
     if (!acc[item.nameSlug]) {
       acc[item.nameSlug] = {
-        name: item["item name"],
+        name: item[ITEM_NAME],
         slug: item.nameSlug,
         items: [],
         total: 0,
         avgCost: 0,
       };
     }
-    acc[item.nameSlug].total += item["item price"];
+    acc[item.nameSlug].total += item[ITEM_PRICE];
     acc[item.nameSlug].items.push(item);
     acc[item.nameSlug].avgCost =
       +acc[item.nameSlug].total / acc[item.nameSlug].items.length;
@@ -62,23 +64,16 @@ export const getData = (orderData) => {
     .map((x) =>
       x["List_of_items"].map((z) => ({
         ...z,
-        "item name": nameClean(z["item name"]),
-        "item price": priceClean(z["item price"]),
-        nameSlug: nameSlug(nameClean(z["item name"])),
+        [ITEM_NAME]: nameClean(z[ITEM_NAME]),
+        [ITEM_PRICE]: priceClean(z[ITEM_PRICE]),
+        nameSlug: nameSlug(nameClean(z[ITEM_NAME])),
         date: new Date(x.order_placed_date),
         orderId: x.order_number,
       }))
     )
     .flat();
   const grouped = groupBy(all);
-  console.log(all, "after");
-  console.log(
-    Object.values(grouped).sort((a, b) =>
-      a.items.length > b.items.length ? -1 : 1
-    ),
-    "GROUPED"
-  );
-  return { all, grouped: Object.values(grouped) };
+  return { [ALL]: all, [GROUPED]: Object.values(grouped) };
 };
 
 export const sortColumns = (a, b, sortAsc) => {
