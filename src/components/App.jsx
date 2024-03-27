@@ -13,9 +13,19 @@ const App = () => {
 
   return (
     <div className="data-table">
-      <div>
-        <button onClick={() => setType(ALL)}>All</button>
-        <button onClick={() => setType(GROUPED)}>Grouped</button>
+      <div className="flex gap-8">
+        <button
+          className={type === ALL ? "active" : null}
+          onClick={() => setType(ALL)}
+        >
+          All
+        </button>
+        <button
+          className={type === GROUPED ? "active" : null}
+          onClick={() => setType(GROUPED)}
+        >
+          Grouped
+        </button>
       </div>
       <Search searchItems={searchItems} />
       {type === ALL ? (
