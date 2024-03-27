@@ -17,14 +17,19 @@ table {
   th,
   td {
     text-align: left;
+    padding: 6px;
+  }
+
+  &,
+  th,
+  td {
+    border: 1px solid black;
+    border-collapse: collapse;
   }
 
   th {
     font-size: 18px;
-  }
-
-  td {
-    padding: 6px 0;
+    cursor: pointer;
   }
 }
 

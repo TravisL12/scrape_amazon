@@ -8,7 +8,7 @@ import { useOrderData } from "../hooks/useOrderData.js";
 import { ALL, GROUPED } from "../constants.js";
 
 const App = () => {
-  const [type, setType] = useState(ALL);
+  const [type, setType] = useState(GROUPED);
   const { data, searchItems } = useOrderData(order, type);
 
   return (

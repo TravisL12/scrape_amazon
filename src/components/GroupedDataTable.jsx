@@ -11,7 +11,7 @@ const groupColumns = [
 ];
 
 const GroupedDataTable = ({ data }) => {
-  const { sortCol, sortAsc, updateSort } = useSort(NAME);
+  const { sortCol, sortAsc, updateSort } = useSort("items");
 
   return (
     <table>
